@@ -18,4 +18,6 @@ canton(pip install canton) </br>
 **compression_imagenet.py:** the Comdefend for Imagenet</br>
 **compression_mnist.py:** the Comdefend for fashion_mnist</br>
 ## In addition
-**E-mail:** jiaxiaojun@iie.ac.cn or 1642768580@qq.com
+This repo is basically for testing in dataset CIFAR10.
+* demo_com.sh : using comodefend to get compression data from adv_data and then save it into h5 file.
+* demo.sh : following demo_com.sh, it tests accuracy based on compression data which is saved in a specific h5 file. 
