@@ -1,0 +1,62 @@
+-------------------
+Directly Trainable:
+counting variables...
+         3    3    3   16  ->  432    W:0
+                       16  ->  16     b:0
+         3    3   16   32  ->  4608   W_1:0
+                       32  ->  32     b_1:0
+         3    3   32   64  ->  18432  W_2:0
+                       64  ->  64     b_2:0
+         3    3   64  128  ->  73728  W_3:0
+                      128  ->  128    b_3:0
+         3    3  128  256  ->  294912 W_4:0
+                      256  ->  256    b_4:0
+         3    3  256  128  ->  294912 W_5:0
+                      128  ->  128    b_5:0
+         3    3  128   64  ->  73728  W_6:0
+                       64  ->  64     b_6:0
+         3    3   64   32  ->  18432  W_7:0
+                       32  ->  32     b_7:0
+         3    3   32   12  ->  3456   W_8:0
+                       12  ->  12     b_8:0
+              tensors: 18  ->  783372 variables
+-------------------
+Not Directly Trainable:
+counting variables...
+               tensors: 0  ->  0      variables
+-------------------
+-------------------
+Directly Trainable:
+counting variables...
+         3    3   12   32  ->  3456   W_9:0
+                       32  ->  32     b_9:0
+         3    3   32   64  ->  18432  W_10:0
+                       64  ->  64     b_10:0
+         3    3   64  128  ->  73728  W_11:0
+                      128  ->  128    b_11:0
+         3    3  128  256  ->  294912 W_12:0
+                      256  ->  256    b_12:0
+         3    3  256  128  ->  294912 W_13:0
+                      128  ->  128    b_13:0
+         3    3  128   64  ->  73728  W_14:0
+                       64  ->  64     b_14:0
+         3    3   64   32  ->  18432  W_15:0
+                       32  ->  32     b_15:0
+         3    3   32   16  ->  4608   W_16:0
+                       16  ->  16     b_16:0
+         3    3   16    3  ->  432    W_17:0
+                        3  ->  3      b_17:0
+              tensors: 18  ->  783363 variables
+-------------------
+Not Directly Trainable:
+counting variables...
+               tensors: 0  ->  0      variables
+-------------------
+^_^ data loaded successfully from data/test_adv_PGD_0.00784.h5
+****
+successfully loaded from checkpoints/enc20_0.0001.npy
+18 weights assigned.
+successfully loaded from checkpoints/dec20_0.0001.npy
+18 weights assigned.
+com_data:(10000, 3, 32, 32)
+com_data saved in data/test_com_PGD_0.00784.h5 successfully ~

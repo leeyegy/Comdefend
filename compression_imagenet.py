@@ -8,6 +8,7 @@ import time
 import os
 import math
 import cv2
+import  h5py
 def mkdir(path):
     # 引入模块
     import os
@@ -80,40 +81,84 @@ def Compression(path,path1,threshold=.5): #将路径中图像压缩还原并保�
     image=readimage(path)
     minibatch =[image]
     minibatch=np.array(minibatch)
-    #print(minibatch.shape)
+    print(minibatch.shape)
     code, rec, code2, rec2,x= test(minibatch,threshold)
     img2=change(rec)
     cv2.imwrite(path1,img2)
-
     return code, code2
 def load():
     print("****")
     com.load_weights('checkpoints/enc20_0.0001.npy')
-    rec.load_weights('checkpoins/dec20_0.0001.npy')
+    rec.load_weights('checkpoints/dec20_0.0001.npy')
+
+
 com,rec = ComCNN(),RecCNN()
 com.summary()
 rec.summary()
+
 import time
-if __name__ == '__main__':
+from config import *
+
+def compression_cifar10(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_file_path="data/test_com_PGD_0.00784.h5",threshold=.5):
+    # get test data_adv
+    h5_store = h5py.File(adv_file_path, 'r')
+    train_data = h5_store['data'][:]  # 通过切片得到np数组
+    train_target = h5_store['true_target'][:]
+    h5_store.close()
+    print("^_^ data loaded successfully from "+adv_file_path)
+
+    #define batch info
+    batch_size = 50
+    nb_steps = 200
+
+    # defence
     test = get_defense()
     get_session().run(ct.gvi())
     load()
-    start = time.time()
-    path='adv.png'
-    path3="temp_imagenet/"
-    mkdir(path3)
-    Divided_Pach(path,path3)
-    for i in range(1,50):
-            mkdir("temp_imagenet/")
-            mkdir("com_imagenet_temp/")
-            path1="temp_imagenet/"+str(i)+'.png'
-            path2="com_imagenet_temp/"+str(i)+'.png'
-            print(path2)
-            Compression(path1,path2)
-    concated=mergeimage('com_imagenet_temp/')
-        #print(concated.shape)
-    path4='result.png'
-    print(path4)
-    cv2.imwrite(path4,concated)
-    end = time.time()
-print(end-start)
+
+    com_data = np.zeros(train_data.shape)
+    for i in range(nb_steps):
+        minibatch = train_data[i*batch_size:(i+1)*batch_size,:,:,:]
+        minibatch = np.transpose(minibatch,[0,2,3,1])
+        code, rec, code2, rec2,x= test(minibatch,threshold)
+        rec  = np.transpose(rec,[0,3,1,2])
+        com_data[i*batch_size:(i+1)*batch_size,:,:,:] = rec
+
+    print("com_data:{}".format(com_data.shape))
+    # save com_data
+    h5_store = h5py.File(save_com_file_path,"w")
+    h5_store.create_dataset('data',data=com_data)
+    h5_store.create_dataset('target',data=train_target)
+    h5_store.close()
+    print("com_data saved in {} successfully ~".format(save_com_file_path))
+
+
+if __name__ == '__main__':
+    adv_data_path = os.path.join("data","test_adv_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+    com_data_path = os.path.join("data","test_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+
+    compression_cifar10(adv_file_path=adv_data_path,save_com_file_path=com_data_path)
+    # test = get_defense()
+    # get_session().run(ct.gvi())
+    # load()
+    # start = time.time()
+    # # path='adv.png'
+    # path='clean_image/6.png'
+    #
+    # path3="temp_imagenet/"
+    # mkdir(path3)
+    # Divided_Pach(path,path3)
+    # for i in range(1,50):
+    #         mkdir("temp_imagenet/")
+    #         mkdir("com_imagenet_temp/")
+    #         path1="temp_imagenet/"+str(i)+'.png'
+    #         path2="com_imagenet_temp/"+str(i)+'.png'
+    #         print(path2)
+    #         Compression(path1,path2)
+    # concated=mergeimage('com_imagenet_temp/')
+    #     #print(concated.shape)
+    # path4='result.png'
+    # print(path4)
+    # cv2.imwrite(path4,concated)
+    # end = time.time()
+# print(end-start)

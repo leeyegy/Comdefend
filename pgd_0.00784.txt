@@ -1,0 +1,4 @@
+| Resuming from checkpoints...
+
+Test set with defence:  cln acc: 6797/10000 (68%)
+
