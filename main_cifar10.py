@@ -66,7 +66,14 @@ if __name__ == '__main__':
     device = torch.device("cuda" if use_cuda else "cpu")
 
     # check file
+    # imagenet
+    # prefix = "/home/Leeyegy/work_space/imagenet_adv/ImageNet_adv/data/"
+    # com_data_path = prefix + "test_ImageNet_"+str(args.set_size)+"_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+
+    # cifar10
     com_data_path = os.path.join("data","test_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+
+    # com_data_path = prefix + "test_ImageNet_"+str(args.set_size)+"_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
     assert os.path.exists(com_data_path), "not found expected file : "+com_data_path
 
     # if not os.path.exists(com_data_path):
@@ -83,13 +90,14 @@ if __name__ == '__main__':
 
     #define batch_size
     batch_size = 50
-    nb_steps=200
+    nb_steps=args.set_size // batch_size
 
     #load net
     print('| Resuming from checkpoints...')
     assert os.path.isdir('checkpoints'), 'Error: No checkpoint directory found!'
     checkpoint = torch.load('./checkpoints/wide-resnet-28x10.t7') #
     model = checkpoint['net']
+    # model = torch.load('./checkpoints/resnet50_epoch_7.pth')
     nb_epoch = 1
 
 
@@ -100,6 +108,7 @@ if __name__ == '__main__':
         clncorrect = 0
 
         for i in range(nb_steps):
+            print("{}/{}".format(i,nb_steps))
             clndata = com_data[i*batch_size:(i+1)*batch_size,:,:,:].to(device)
             target = true_target[i*batch_size:(i+1)*batch_size].to(device)
             # clndata, target = torch.from_numpy(com_data[i*batch_size:(i+1)*batch_size,:,:,:]).to(device), target[i*batch_size:(i+1)*batch_size].to(device)
@@ -112,7 +121,7 @@ if __name__ == '__main__':
 
 
         print('\nTest set with defence: '
-              ' cln acc: {}/{} ({:.0f}%)\n'.format( clncorrect, 10000,
-                  100. * clncorrect / 10000))
+              ' cln acc: {}/{} ({:.0f}%)\n'.format( clncorrect, args.set_size,
+                  100. * clncorrect / args.set_size))
 
 

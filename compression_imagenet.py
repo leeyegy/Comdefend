@@ -99,7 +99,7 @@ rec.summary()
 import time
 from config import *
 
-def compression_cifar10(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_file_path="data/test_com_PGD_0.00784.h5",threshold=.5):
+def compression_imagenet(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_file_path="data/test_com_PGD_0.00784.h5",threshold=.5):
     # get test data_adv
     h5_store = h5py.File(adv_file_path, 'r')
     train_data = h5_store['data'][:]  # 通过切片得到np数组
@@ -132,12 +132,58 @@ def compression_cifar10(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_fi
     h5_store.close()
     print("com_data saved in {} successfully ~".format(save_com_file_path))
 
+def compression_cifar10(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_file_path="data/test_com_PGD_0.00784.h5",threshold=.5,set_size=1000):
+    # get test data_adv
+    h5_store = h5py.File(adv_file_path, 'r')
+    train_data = h5_store['data'][:]  # 通过切片得到np数组
+    train_target = h5_store['true_target'][:]
+    h5_store.close()
+    print("^_^ data loaded successfully from "+adv_file_path)
+
+    #define batch info
+    batch_size = 50
+    nb_steps = set_size//batch_size
+
+    # defence
+    test = get_defense()
+    get_session().run(ct.gvi())
+    load()
+
+    com_data = np.zeros(train_data.shape)
+    for i in range(nb_steps):
+        minibatch = train_data[i*batch_size:(i+1)*batch_size,:,:,:]
+        minibatch = np.transpose(minibatch,[0,2,3,1])
+        code, rec, code2, rec2,x= test(minibatch,threshold)
+        rec  = np.transpose(rec,[0,3,1,2])
+        com_data[i*batch_size:(i+1)*batch_size,:,:,:] = rec
+
+    print("com_data:{}".format(com_data.shape))
+    # save com_data
+    h5_store = h5py.File(save_com_file_path,"w")
+    h5_store.create_dataset('data',data=com_data)
+    h5_store.create_dataset('target',data=train_target)
+    h5_store.close()
+    print("com_data saved in {} successfully ~".format(save_com_file_path))
+
 
 if __name__ == '__main__':
-    adv_data_path = os.path.join("data","test_adv_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
-    com_data_path = os.path.join("data","test_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+    # for imagenet
 
-    compression_cifar10(adv_file_path=adv_data_path,save_com_file_path=com_data_path)
+    # prefix = "/home/Leeyegy/work_space/imagenet_adv/ImageNet_adv/data/"
+    # adv_data_path = prefix + "test_ImageNet_"+str(args.set_size)+"_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    # com_data_path = prefix + "test_ImageNet_"+str(args.set_size)+"_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+
+    # for cifar10
+    prefix = "/home/Leeyegy/work_space/comdefend/Comdefend_tensorflow/data/"
+    adv_data_path = prefix + "test_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    com_data_path = "data/test_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+
+    # adv_data_path = prefix+"test_ImageNet_1000.h5"
+    # com_data_path = prefix+"test_ImageNet_1000_com.h5"
+
+    # if cifar10 : please use 10000 for set_size
+    compression_cifar10(adv_file_path=adv_data_path,save_com_file_path=com_data_path,set_size=args.set_size)
+
     # test = get_defense()
     # get_session().run(ct.gvi())
     # load()
