@@ -72,6 +72,10 @@ if __name__ == '__main__':
 
     # cifar10
     com_data_path = os.path.join("data","test_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+    # com_data_path = os.path.join("data","test_adv_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+
+    # clean
+    # com_data_path = os.path.join("data","test_com.h5")
 
     # com_data_path = prefix + "test_ImageNet_"+str(args.set_size)+"_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
     assert os.path.exists(com_data_path), "not found expected file : "+com_data_path
@@ -86,6 +90,8 @@ if __name__ == '__main__':
     h5_store = h5py.File(com_data_path,"r")
     com_data = torch.from_numpy(h5_store['data'][:])
     true_target = torch.from_numpy(h5_store['target'][:])
+    # true_target = torch.from_numpy(h5_store['true_target'][:])
+
     h5_store.close()
 
     #define batch_size

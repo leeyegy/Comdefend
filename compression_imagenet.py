@@ -137,6 +137,7 @@ def compression_cifar10(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_fi
     h5_store = h5py.File(adv_file_path, 'r')
     train_data = h5_store['data'][:]  # 通过切片得到np数组
     train_target = h5_store['true_target'][:]
+    # train_target = h5_store['target'][:]
     h5_store.close()
     print("^_^ data loaded successfully from "+adv_file_path)
 
@@ -177,6 +178,10 @@ if __name__ == '__main__':
     prefix = "/home/Leeyegy/work_space/comdefend/Comdefend_tensorflow/data/"
     adv_data_path = prefix + "test_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
     com_data_path = "data/test_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+
+    # for clean
+    # adv_data_path = "data/test.h5"
+    # com_data_path = "data/test_com.h5"
 
     # adv_data_path = prefix+"test_ImageNet_1000.h5"
     # com_data_path = prefix+"test_ImageNet_1000_com.h5"
