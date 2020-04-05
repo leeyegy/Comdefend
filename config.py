@@ -2,7 +2,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 # attack
-parser.add_argument("--attack_method", default="PGD", choices=["PGD", "FGSM", "Momentum", "STA","NONE","DeepFool","JSMA","CW"])
+parser.add_argument("--attack_method", default="PGD", choices=["PGD", "FGSM", "Momentum", "STA","NONE","DeepFool","CW"])
 parser.add_argument("--epsilon", type=float, default=8 / 255)
 
 # dataset
