@@ -65,14 +65,17 @@ if __name__ == '__main__':
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
+
     # cifar10
-    com_data_path = os.path.join("data","test_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+    # com_data_path = os.path.join("data","test_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
     # com_data_path = os.path.join("data","test_adv_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
 
     # clean
     # com_data_path = os.path.join("data","test_com.h5")
 
-    # com_data_path = prefix + "test_ImageNet_"+str(args.set_size)+"_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    # tiny_imagenet
+    prefix = "data/"
+    com_data_path = prefix + "test_tiny_ImageNet_"+str(args.set_size)+"_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
     assert os.path.exists(com_data_path), "not found expected file : "+com_data_path
 
     # if not os.path.exists(com_data_path):
@@ -96,8 +99,8 @@ if __name__ == '__main__':
     #load net
     print('| Resuming from checkpoints...')
     assert os.path.isdir('checkpoints'), 'Error: No checkpoint directory found!'
-    checkpoint = torch.load('./checkpoints/wide-resnet-28x10.t7') #
-    model = checkpoint['net']
+    model = torch.load('./checkpoints/resnet50_epoch_22.pth') #
+    # model = checkpoint['net']
     # model = torch.load('./checkpoints/resnet50_epoch_7.pth')
     nb_epoch = 1
 
@@ -117,7 +120,10 @@ if __name__ == '__main__':
             with torch.no_grad():
                 output = model(clndata.float())
 
+
             pred = output.max(1, keepdim=True)[1]
+            pred = pred.double()
+            target = target.double()
             clncorrect += pred.eq(target.view_as(pred)).sum().item()
 
 

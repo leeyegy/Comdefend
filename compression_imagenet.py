@@ -136,7 +136,10 @@ def compression_cifar10(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_fi
     # get test data_adv
     h5_store = h5py.File(adv_file_path, 'r')
     train_data = h5_store['data'][:]  # 通过切片得到np数组
-    train_target = h5_store['true_target'][:]
+    try:
+        train_target = h5_store['true_target'][:]
+    except:
+        train_target = h5_store['target'][:]
     h5_store.close()
     print("^_^ data loaded successfully from "+adv_file_path)
 
@@ -174,14 +177,15 @@ if __name__ == '__main__':
     # com_data_path = prefix + "test_ImageNet_"+str(args.set_size)+"_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
 
     # for tiny_imagenet
-    prefix = "data/tiny_imagenet/"
-    adv_data_path = prefix + "test_tiny_ImageNet_1000_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
-    com_data_path = "data/test_tiny_ImageNet_1000_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    # prefix = "data/tiny_imagenet/"
+    # adv_data_path = prefix + "test_tiny_ImageNet_1000_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    # com_data_path = "data/test_tiny_ImageNet_1000_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
 
     # for cifar10
     # prefix = "/home/Leeyegy/work_space/comdefend/Comdefend_tensorflow/data/"
-    # adv_data_path = prefix + "test_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
-    # com_data_path = "data/test_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    prefix="data/"
+    adv_data_path = prefix + "test_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    com_data_path = "data/test_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
 
     # for clean
     # adv_data_path = "data/test.h5"

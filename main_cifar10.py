@@ -70,12 +70,12 @@ if __name__ == '__main__':
     # prefix = "/home/Leeyegy/work_space/imagenet_adv/ImageNet_adv/data/"
     # com_data_path = prefix + "test_ImageNet_"+str(args.set_size)+"_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
 
-    #tiny_imagenet
-    com_data_path = os.path.join("data/tiny_imagenet","test_tiny_ImageNet_1000_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+    # #tiny_imagenet
+    # com_data_path = os.path.join("data/tiny_imagenet","test_tiny_ImageNet_1000_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
 
 
     # cifar10
-    # com_data_path = os.path.join("data","test_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
+    com_data_path = os.path.join("data","test_com_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
     # com_data_path = os.path.join("data","test_adv_"+str(args.attack_method)+"_"+str(args.epsilon)+".h5")
 
     # clean
@@ -107,7 +107,11 @@ if __name__ == '__main__':
     assert os.path.isdir('checkpoints'), 'Error: No checkpoint directory found!'
     # checkpoint = torch.load('./checkpoints/wide-resnet-28x10.t7') # for cifar10
     # model = checkpoint['net']
-    model = torch.load('./checkpoints/resnet50_epoch_22.pth') # for tiny_imagenet
+    # model = torch.load('./checkpoints/resnet50_epoch_22.pth') # for tiny_imagenet
+    model = torch.load('./checkpoints/cifar10_resnet50_model_199.pth')
+    #model = torch.load('./checkpoints/cifar10_vgg16_model_299.pth')
+   # model = torch.load('./checkpoints/cifar10_vgg11_model_199.pth')
+
     nb_epoch = 1
 
 
@@ -127,6 +131,8 @@ if __name__ == '__main__':
                 output = model(clndata.float())
 
             pred = output.max(1, keepdim=True)[1]
+            pred = pred.double()
+            target=target.double()
             clncorrect += pred.eq(target.view_as(pred)).sum().item()
 
 
