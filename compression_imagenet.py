@@ -132,7 +132,7 @@ def compression_imagenet(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_f
     h5_store.close()
     print("com_data saved in {} successfully ~".format(save_com_file_path))
 
-def compression_cifar10(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_file_path="data/test_com_PGD_0.00784.h5",threshold=.5,set_size=1000):
+def compression_cifar10(adv_file_path="data/test_adv_PGD_0.00784.h5",save_com_file_path="data/test_com_PGD_0.00784.h5",threshold=.5,set_size=10000):
     # get test data_adv
     h5_store = h5py.File(adv_file_path, 'r')
     train_data = h5_store['data'][:]  # 通过切片得到np数组

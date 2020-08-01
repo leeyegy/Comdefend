@@ -105,10 +105,10 @@ if __name__ == '__main__':
     #load net
     print('| Resuming from checkpoints...')
     assert os.path.isdir('checkpoints'), 'Error: No checkpoint directory found!'
-    # checkpoint = torch.load('./checkpoints/wide-resnet-28x10.t7') # for cifar10
-    # model = checkpoint['net']
+    checkpoint = torch.load('./checkpoints/wide-resnet-28x10.t7') # for cifar10
+    model = checkpoint['net']
     # model = torch.load('./checkpoints/resnet50_epoch_22.pth') # for tiny_imagenet
-    model = torch.load('./checkpoints/cifar10_resnet50_model_199.pth')
+    # model = torch.load('./checkpoints/cifar10_resnet50_model_199.pth')
     #model = torch.load('./checkpoints/cifar10_vgg16_model_299.pth')
    # model = torch.load('./checkpoints/cifar10_vgg11_model_199.pth')
 
