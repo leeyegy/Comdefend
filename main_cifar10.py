@@ -98,6 +98,11 @@ if __name__ == '__main__':
 
     h5_store.close()
 
+    h5_store = h5py.File("data/test.h5", 'r')
+    cln_data = torch.from_numpy(h5_store['data'][:])
+    h5_store.close()
+
+
     #define batch_size
     batch_size = 50
     nb_steps=args.set_size // batch_size
@@ -120,24 +125,29 @@ if __name__ == '__main__':
         #evaluate
         model.eval()
         clncorrect = 0
+        clncorrect_com = 0
 
         for i in range(nb_steps):
-            print("{}/{}".format(i,nb_steps))
-            clndata = com_data[i*batch_size:(i+1)*batch_size,:,:,:].to(device)
+            # print("{}/{}".format(i,nb_steps))
+            comdata = com_data[i*batch_size:(i+1)*batch_size,:,:,:].to(device)
+            clndata = cln_data[i*batch_size:(i+1)*batch_size,:,:,:].to(device)
             target = true_target[i*batch_size:(i+1)*batch_size].to(device)
-            # clndata, target = torch.from_numpy(com_data[i*batch_size:(i+1)*batch_size,:,:,:]).to(device), target[i*batch_size:(i+1)*batch_size].to(device)
-            # print("target:{}".format(target.size()))
             with torch.no_grad():
                 output = model(clndata.float())
+                output_com = model(comdata.float())
 
             pred = output.max(1, keepdim=True)[1]
             pred = pred.double()
             target=target.double()
             clncorrect += pred.eq(target.view_as(pred)).sum().item()
-
+            pred_com = output_com.max(1, keepdim=True)[1]
+            pred_com = pred_com.double()
+            clncorrect_com += pred_com.eq(target.view_as(pred_com)).sum().item()
 
         print('\nTest set with defence: '
               ' cln acc: {}/{} ({:.0f}%)\n'.format( clncorrect, args.set_size,
                   100. * clncorrect / args.set_size))
-
+        print('\nTest set with defence: '
+              ' defended acc: {}/{} ({:.0f}%)\n'.format( clncorrect_com, args.set_size,
+                  100. * clncorrect_com / args.set_size))
 

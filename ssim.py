@@ -32,6 +32,22 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 
 import  os
 from config import  args
+import math
+
+
+def psnr1(img1, img2):
+    mse = np.mean((img1 / 1.0 - img2 / 1.0) ** 2)
+    if mse < 1.0e-10:
+        return 100
+    return 10 * math.log10(255.0 ** 2 / mse)
+
+
+def psnr2(img1, img2):
+    mse = np.mean((img1 / 255. - img2 / 255.) ** 2)
+    if mse < 1.0e-10:
+        return 100
+    PIXEL_MAX = 1
+    return 20 * math.log10(PIXEL_MAX / math.sqrt(mse))
 
 def ssim_and_save(com_data,cln_data):
     '''
@@ -41,19 +57,24 @@ def ssim_and_save(com_data,cln_data):
     '''
     com_data = ((np.transpose(com_data.numpy(),[0,2,3,1]))*255).astype(np.float32)
     cln_data = ((np.transpose(cln_data,[0,2,3,1]))*255).astype(np.float32) # only np.float32 is supported
+    ssim_list=[]
+    psnr_list = []
 
     for index in range(com_data.shape[0]):
         com_img = com_data[index]
         cln_img = cln_data[index]
-        print(com_img.shape)
+        psnr = psnr2(com_img,cln_img)
+        psnr_list.append(psnr)
         grayA = cv2.cvtColor(com_img, cv2.COLOR_BGR2GRAY)
         grayB = cv2.cvtColor(cln_img, cv2.COLOR_BGR2GRAY)
         (score, diff) = compare_ssim(grayA, grayB, full=True)
+        ssim_list.append(score)
         print("img index: {} , SSIM: {}".format(index,score))
         com_filename = os.path.join("defend_image",str(index)+".png")
         cln_filename = os.path.join("clean_image",str(index)+".png")
         cv2.imwrite(com_filename,com_data[index])
         cv2.imwrite(cln_filename,cln_data[index])
+    print("avg ssim:{} , avg psnr:{} ".format(np.asarray(ssim_list).mean(),np.asarray(psnr_list).mean()))
 
 
 if __name__ == '__main__':
