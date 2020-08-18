@@ -1,5 +1,5 @@
 import sys
-from processer import *
+# from processer import *
 import numpy as np
 import canton as ct
 from canton import *
@@ -7,7 +7,7 @@ import tensorflow as tf
 import time
 import os
 import math
-import cv2
+# import cv2
 import  h5py
 def mkdir(path):
     # 引入模块
@@ -76,16 +76,16 @@ def get_defense():
         return res
     return test
 
-def Compression(path,path1,threshold=.5): #将路径中图像压缩还原并保存再路径中 code bool code2 float
-    import cv2
-    image=readimage(path)
-    minibatch =[image]
-    minibatch=np.array(minibatch)
-    print(minibatch.shape)
-    code, rec, code2, rec2,x= test(minibatch,threshold)
-    img2=change(rec)
-    cv2.imwrite(path1,img2)
-    return code, code2
+# def Compression(path,path1,threshold=.5): #将路径中图像压缩还原并保存再路径中 code bool code2 float
+#     import cv2
+#     image=readimage(path)
+#     minibatch =[image]
+#     minibatch=np.array(minibatch)
+#     print(minibatch.shape)
+#     code, rec, code2, rec2,x= test(minibatch,threshold)
+#     img2=change(rec)
+#     cv2.imwrite(path1,img2)
+#     return code, code2
 def load():
     print("****")
     com.load_weights('checkpoints/enc20_0.0001.npy')
@@ -183,9 +183,9 @@ if __name__ == '__main__':
 
     # for cifar10
     # prefix = "/home/Leeyegy/work_space/comdefend/Comdefend_tensorflow/data/"
-    prefix="data/"
-    adv_data_path = prefix + "test_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
-    com_data_path = "data/test_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    prefix="/home/Leeyegy/work_space/topic_10_ddid/ddid/ddid-python/data/"
+    adv_data_path = prefix + "new_test_adv_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
+    com_data_path = "data/new_test_com_" + str(args.attack_method) + "_" + str(args.epsilon) + ".h5"
 
     # for clean
     # adv_data_path = "data/test.h5"
